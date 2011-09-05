@@ -1,0 +1,10 @@
+OTP behavior to create tcp servers with ease.
+
+TODO
+-----
+
+1. More documentation in source
+2. Design documentation
+3. Some examples
+4. Unit tests
+5. Fix build system
