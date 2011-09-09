@@ -50,7 +50,6 @@
 	 handle_info/2,
 	 terminate/2, code_change/3]).
 
-
 %%--------------------------------------------------------------------
 %% Internal exports
 %%--------------------------------------------------------------------
@@ -276,7 +275,7 @@ handle_session_termination(Session_Sup, #state{sessions = Sessions} = _State) ->
     {ok, Id}.    
 
 handle_register(Session0, #state{sessions = Sessions} = _State) ->
-    Id = gen_proto:id(Session0),
+    Id = api:id(Session0),
     ets:insert(Sessions, clear_ro_fields(Session0)).
 
 handle_unregister(Session, #state{sessions = Sessions} = _State) ->
@@ -284,7 +283,7 @@ handle_unregister(Session, #state{sessions = Sessions} = _State) ->
 
 handle_change_status(#session{} = Session0, 
 		     active, #state{sessions = Sessions} = State) ->
-    Id = gen_proto:id(Session0),
+    Id = api:id(Session0),
     case handle_sessions([{id, Id}], State) of
 	{ok, [#session{stat = Statistic} = Session1]} -> 
 	    ets:delete(Sessions, Session1),
@@ -298,7 +297,7 @@ handle_change_status(#session{} = Session0,
     end;
 handle_change_status(#session{id = Id0} = Session0, connecting, 
 		     #state{sessions = Sessions} = State) ->
-    Id = gen_proto:id(Session0),
+    Id = api:id(Session0),
     case handle_sessions([{id, Id}], State) of
 	{ok, [Session1]} -> 
 	    ets:delete(Sessions, Session1),
