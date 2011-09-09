@@ -110,13 +110,14 @@ init(#session{socket = #socket{
 		local_ip = Address,
 		local_port = Port,
 		transport = Transport,
-		opts = Socket_Opts}, opts = _Session_Opts} = Handler) -> 
+		opts = Socket_Opts0}, opts = _Session_Opts} = Handler) -> 
     ?debug("About to init, args ~p.",[Handler], init),
     Fixed = transport:fix_opts(Handler),
     mgr:session_register(Fixed),
     ?assert(transport:check_opts(Fixed)),
     ?assert(session:check_opts(Fixed)),
-    Transport_Opts = [{address, Address}, {port, Port}, {opts, Socket_Opts}],
+    Socket_Opts1 = [{reuseaddr, true}|Socket_Opts0],
+    Transport_Opts = [{address, Address}, {port, Port}, {opts, Socket_Opts1}],
     case transport:listen(Transport, Transport_Opts) of
 	{ok, Socket} -> 
 	    Pid = accept:start_link(Socket, self(), Fixed),
