@@ -29,6 +29,7 @@
 -include("debug.hrl").
 -include("utils.hrl").
 -include("gen_proto.hrl").
+-include("internal.hrl").
 
 %%--------------------------------------------------------------------
 %% Import libraries
@@ -36,8 +37,6 @@
 %%-import(lists).
 -import(proplists).
 -import(gen_server).
-
--define(session, common.gen_proto.src.session).
 
 %%--------------------------------------------------------------------
 %% API
