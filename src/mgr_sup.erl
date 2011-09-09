@@ -28,12 +28,12 @@
 -include("gen_proto.hrl").
 -include("internal.hrl").
 
+-define(session_sup, common.gen_proto.super).
 %%--------------------------------------------------------------------
 %% Imported libraries
 %%--------------------------------------------------------------------
 -import(proplists).
 -import(supervisor).
-
 
 %%--------------------------------------------------------------------
 %% External exports
@@ -72,12 +72,12 @@ add_session(Socket, Session) ->
 add_session(Sup, Socket, #session{id = Id} = Session) ->
      ?debug("About to add session ~p to supervisor ~p", [Id, Sup], add_session),
      Handler = {Id,
- 	       {?session,start_link,[Socket, Session]},
+ 	       {?session_sup,start_link,[Socket, Session]},
  	       temporary, %% temporary - child process should never be restarted
  	       5000,
  	       worker, %% to force process die
- 	       [?session]},
-    supervisor:start_child(Sup, Handler).
+ 	       [?session_sup]},
+    supervisor:start_child(Sup, Handler).	     
 
 terminate_session(Id) -> terminate_session(?MODULE, Id).
 terminate_session(Sup, Id) -> supervisor:terminate_child(Sup, Id).
