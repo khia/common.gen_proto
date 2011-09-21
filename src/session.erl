@@ -261,7 +261,14 @@ handle_info(Message, State) ->
 -spec(terminate/2 :: (Reason :: term(), #state{}) -> normal).
 terminate(Reason, #state{socket = Socket, transport = Transport} = _State) ->
     ?debug("session was terminated ~p", [Reason], terminate),
-    normal.
+    case transport:close(Transport, Socket) of 
+	ok -> normal;
+	{error, Reason} -> 
+	    ?debug("Cannot close socket (~p) trying to shutdown it.", 
+		   [Socket], handle_call),
+	    transport:shutdown(Transport, Socket, read_write),
+	    {error, {close_socket, Reason}}
+    end.
 
 %%--------------------------------------------------------------------
 %% @doc 
