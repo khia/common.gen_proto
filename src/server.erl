@@ -213,7 +213,11 @@ handle_info({'EXIT', Pid, normal}, #state{acceptor=Pid} = State) ->
 handle_info({'EXIT', Pid, _Abnormal}, 
 	    #state{acceptor=Pid, listen_socket = Socket, 
 		   session = Handler} = State) ->
-    timer:sleep(2000),
+    %%proc_lib:spawn_link( %% If we remove timer:sleep() we can remove spawn_link
+    %%  fun() ->
+    %%	      timer:sleep(500), % do we need this. 
+    %%	      New_pid = accept:spawn_link(Socket, self(), Handler)
+    %%  end),
     New_pid = accept:spawn_link(Socket, self(), Handler),
     {noreply, State#state{acceptor=New_pid}};
 
