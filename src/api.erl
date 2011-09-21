@@ -82,7 +82,10 @@ add_handler(#session{socket = #socket{mode = listener}} = Handler) ->
 add_handler(#session{socket = #socket{mode = connector}} = Handler) ->
     sup:add_connector(Handler).
 
-send(Pid, Packet) -> 
+send(undefind, Packet) -> 
+    {error, session_is_not_running};
+send(Pid, Packet) when is_pid(Pid) -> 
+    ?debug("Packet: ~p, ~p.", [Pid, Packet], send),
     session:send(Pid, Packet).
 
 id(#session{socket = #socket{mode = listener, 
