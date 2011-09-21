@@ -120,7 +120,7 @@ init(#session{socket = #socket{
     Transport_Opts = [{address, Address}, {port, Port}, {opts, Socket_Opts1}],
     case transport:listen(Transport, Transport_Opts) of
 	{ok, Socket} -> 
-	    Pid = accept:start_link(Socket, self(), Fixed),
+	    Pid = accept:spawn_link(Socket, self(), Fixed),
 	    State = #state{listen_socket = Socket,
 			   acceptor = Pid, 
 			   transport = Transport,
@@ -186,7 +186,7 @@ handle_call(Request, From, State) ->
 %% Called by gen_server framework when the cast message from create/2 is received
 handle_cast({create, _Pid}, #state{listen_socket = Socket, 
 				   session = Handler} = State) ->
-    New_pid = accept:start_link(Socket, self(), Handler),
+    New_pid = accept:spawn_link(Socket, self(), Handler),
     {noreply, State#state{acceptor=New_pid}};
 
 handle_cast(Message, State) ->
@@ -214,7 +214,7 @@ handle_info({'EXIT', Pid, _Abnormal},
 	    #state{acceptor=Pid, listen_socket = Socket, 
 		   session = Handler} = State) ->
     timer:sleep(2000),
-    New_pid = accept:start_link(Socket, self(), Handler),
+    New_pid = accept:spawn_link(Socket, self(), Handler),
     {noreply, State#state{acceptor=New_pid}};
 
 handle_info(Message, State) ->

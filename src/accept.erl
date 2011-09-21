@@ -38,7 +38,7 @@
 %% API
 
 %% Public API
--export([start_link/3, stop/1]).
+-export([spawn_link/3, stop/1]).
 
 %% OTP callbacks
 -export([init/1]).
@@ -46,7 +46,7 @@
 %% Test functions
 %%-export([test/1]).
 
-start_link(Listen_Socket, Listen_Pid, Handler) ->
+spawn_link(Listen_Socket, Listen_Pid, Handler) ->
     proc_lib:spawn_link(?MODULE, init, [{Listen_Socket, Listen_Pid, Handler}]).
 
 stop(Pid) -> catch exit(Pid, normal).
