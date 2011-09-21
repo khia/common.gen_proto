@@ -185,7 +185,7 @@ handle_cast({send, Packet},
     transport:send(Transport, Socket, Packet),
     {noreply, State, Timeout};
 handle_cast(Message, State) ->
-    ?debug("Got unhandled info message ~p.", [Message], handle_info),
+    ?debug("Got unhandled info message ~p.", [Message], handle_cast),
     {noreply, State}.
 
 %%--------------------------------------------------------------------
