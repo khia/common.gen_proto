@@ -150,8 +150,9 @@ init({Socket, #session{fsm = FSM_Module, pdu = PDU, id = Id, opts = Options,
 	     {stop, Reason :: term(), #state{}}).
 %%--------------------------------------------------------------------
 handle_call({connect, #ext{sup = Sup, fsm = FSM}}, _From, 
-	    #state{fsm = FSM_Module, pdu = PDU, id = Id} = State) ->
+	    #state{fsm = FSM_Module, pdu = PDU, id = Id, socket = Socket, data = Data} = State) ->
     Reply = FSM_Module:session_event(FSM, PDU, {ctrl, {start, Id, self()}}),
+    self() ! {data, Socket, Data},
     {reply, Reply, State#state{fsm_pid = FSM, sup = Sup}};
 handle_call(status, _From, State) ->
     KVs = ?record_to_keyval(state, State),
@@ -200,12 +201,18 @@ handle_cast(Message, State) ->
       (M :: term(), #state{}) -> {stop, Reason :: term(), #state{}}).
 
 %% TODO find another way to route tcp 
+handle_info({tcp, Socket, Data}, #state{id = _Id, fsm_pid = undefined, data = Bin} = State) ->
+    Packet = <<Bin/binary, Data/binary>>,
+    {noreply, State#state{data = Packet}};
 handle_info({tcp, Socket, Data}, #state{id = _Id} = State) ->
     handle_info({data, Socket, Data}, State);
 handle_info({tcp_closed, Socket}, State) ->
     handle_info({session_closed, Socket}, State);
 handle_info({tcp_error, Socket, Reason}, State) ->
     handle_info({session_error, Socket, Reason}, State);
+
+handle_info({data, _Socket, <<>>}, State) ->
+    {noreply, State};
 
 handle_info({data, _Socket, Data}, 
 	    #state{fsm = FSM_Module, 
