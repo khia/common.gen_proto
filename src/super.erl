@@ -72,7 +72,7 @@ start_link(Socket, Handler) ->
 		{ok, Sup, State} ->
 		    Session = proplists:get_value(session, State),
 		    FSM =  proplists:get_value(fsm, State),
-		    ?debug("STATE ~p",[State],start_link),
+		    ?debug("STATE ~p",[State], start_link),
 		    {ok, Sup, {Session, FSM}};
 		Error_Status -> Error_Status
 	    end;
