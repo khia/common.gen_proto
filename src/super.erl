@@ -219,9 +219,8 @@ handle_info(Message, State) ->
 %%    The return value is ignored.
 %% @end
 %%--------------------------------------------------------------------
--spec(terminate/2 :: (Reason :: term(), #state{}) -> ok).
-terminate(_Reason, _State) ->
-    ok.
+-spec(terminate/2 :: (Reason :: term(), #state{}) -> normal).
+terminate(_Reason, _State) -> normal.
 
 %%--------------------------------------------------------------------
 %% @doc 

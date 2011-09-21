@@ -245,8 +245,7 @@ terminate(_Reason, #state{transport = Transport, connect_socket = Socket,
 		   [Socket], handle_call),
 	    transport:shutdown(Transport, Socket, read_write),
 	    {error, {close_socket, Reason}}
-    end,
-    ok.
+    end.
 
 %%--------------------------------------------------------------------
 %% @doc 
